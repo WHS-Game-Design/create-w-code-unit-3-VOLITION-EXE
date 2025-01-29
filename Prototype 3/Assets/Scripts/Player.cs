@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float move = 2;
+    //public float move = 2;
     public float sideChangetime;
     public Rigidbody playerRb;
     public float JumpForce;
@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     private Vector3 currentSide;
     public bool Grounded;
     private Animator playeran;
+    public Vector3 startPos;
+    public float sideLength;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,13 +29,25 @@ public class Player : MonoBehaviour
             playerRb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
             playeran.SetTrigger("Jump_trig");
         }
-        if (Input.GetKeyDown(KeyCode.D) && move != 1){
-            move -= 1;
+        if (Input.GetKeyDown(KeyCode.D) && transform.position.x != startPos - sideLength){
+            transform.position = new Vector3 (transform.position.x, transform.position.y, transform.position.z + sideLength);
         }
-        if (Input.GetKeyDown(KeyCode.A) && move != 3){
-            move += 1;
+        if (Input.GetKeyDown(KeyCode.A) && transform.position.x != startPos + sideLength){
+            transform.position = new Vector3 (transform.position.x, transform.position.y, transform.position.z - sideLength)
         }
-        switch (move){
+        //make a simple free fall animation after the jump animation and transition it back into running when landing
+        void OnCollisionEnter(Collision col) {
+            if(col.gameObject.CompareTag("ground")){
+            Grounded = true;
+            }
+        }
+        void OnCollisionExit(Collision col) {
+            if(col.gameObject.CompareTag("ground")){
+            Grounded = false;
+            }
+        }
+
+        /*switch (move){
             case 1:
             transform.position = new Vector3 (-35, 0, Mathf.Lerp(currentSide.z, -66, sideChangetime * Time.deltaTime));
             currentSide.z = -66f;
@@ -47,17 +61,7 @@ public class Player : MonoBehaviour
             currentSide.z = -54f;
             break;
         }
-        void OnCollisionEnter(Collision col) {
-            if(col.gameObject.CompareTag("ground")){
-            Grounded = true;
-            }
-        }
-        void OnCollisionExit(Collision col) {
-            if(col.gameObject.CompareTag("ground")){
-            Grounded = false;
-            }
-        }
-        
+        */
         
         /*if (move == 2){
             transform.position = new Vector3 (-35, 0, Mathf.Lerp(currentSide.z, -60, sideChangetime * Time.deltaTime));
